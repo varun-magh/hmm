@@ -1,0 +1,44 @@
+library(HMM)
+library(TSstudio)
+data<-read.table("C:/Users/gokul/Downloads/MBB.csv",header=TRUE,sep=",",as.is=TRUE)
+#data<-read.table("C:/Users/gokul/Downloads/VMBS.csv",header=TRUE,sep=",",as.is=TRUE)
+closepricedata<???as.double(data$Close[1:183])
+closepricedate<???data$Date[2:183]
+timeDate<???as.Date.character(closepricedate)
+closepricedata
+A<???matrix(1:4,2,2)
+A<???A/rowSums(A)
+Timelen<???as.numeric(length(closepricedata))
+B<???matrix(1:4,2,2)
+B<???B/rowSums(B)
+init<???c(0.3,0.7)
+dataclose<???vector("numeric",Timelen???1)
+for(i in 2:Timelen){
+  v<???((closepricedata[i]???closepricedata[i???1])/closepricedata[i???1])*100
+  if(v<0)
+    dataclose[i???1]<???1
+  else if(v>=0)
+    dataclose[i???1]<???2
+}
+statesHMM<???c('re1','gr1')
+symb<???c(1,2)
+hmm<???initHMM(statesHMM,symb,init,A,B)
+print(hmm)
+start.time<???Sys.time()
+bw<???baumWelch(hmm,dataclose,maxIterations=500,delta=1E???6)
+print(bw$hmm)
+end.time<???Sys.time()
+time.taken<???end.time???start.time
+time.taken
+vb<???viterbi(bw$hmm,dataclose)
+print(vb)
+len<???length(vb)
+a<???vb
+b<???as.matrix(1,len???1)
+time1<???as.matrix(1:len???1,len???1)
+for(i in 1:len){
+  if(a[i]=="re1")
+    b[i]<???1
+  else: 
+    b[i]<???2
+}
